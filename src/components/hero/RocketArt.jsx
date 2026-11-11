@@ -30,7 +30,13 @@ function getDesktopServerSnapshot() {
  * - Astronaut developer on ridge looking through telescope
  * - Full reduced-motion and mobile (< 1024px) fallback to static/idle hover state
  */
-export default function RocketArt({ scrollProgress }) {
+export default function RocketArt({
+  scrollProgress,
+  viewBox="0 0 720 900",
+  preserveAspectRatio = "xMinYMax slice",
+  className = "",
+  style = {}
+}) {
   const fallbackProgress = useMotionValue(0);
   const progress = scrollProgress || fallbackProgress;
   const shouldReduceMotion = useReducedMotion();
@@ -68,11 +74,12 @@ export default function RocketArt({ scrollProgress }) {
 
   return (
     <svg
-      className="lp-art"
+      className={`lp-art ${className}`}
       role="img"
       aria-label="A white rocket launching diagonally through a starry violet sky above launch clouds, watched by an astronaut developer with a telescope"
-      viewBox="0 0 720 900"
-      preserveAspectRatio="xMinYMax slice"
+      viewBox={viewBox}
+      preserveAspectRatio={preserveAspectRatio}
+      style={style}
     >
       <defs>
         <linearGradient id="lpBody" x1="0" y1="0" x2="1" y2="0">
@@ -540,9 +547,11 @@ export default function RocketArt({ scrollProgress }) {
         <circle cx="20.5" cy="-174" r="3" fill="#FB7185" />
       </g>
 
-      {/* launch clouds */}
+      {/* launch clouds (flowing organically without vertical cutoff rect) */}
       <g className="lp-drift-b">
         <g fill="#C4B5FD" opacity="0.5">
+          <circle cx="-140" cy="790" r="80" />
+          <circle cx="-40" cy="770" r="80" />
           <circle cx="40" cy="760" r="86" />
           <circle cx="150" cy="742" r="72" />
           <circle cx="250" cy="790" r="74" />
@@ -551,6 +560,7 @@ export default function RocketArt({ scrollProgress }) {
       </g>
       <g className="lp-drift">
         <g fill="#DDD6FE">
+          <circle cx="-150" cy="850" r="90" />
           <circle cx="-10" cy="830" r="96" />
           <circle cx="104" cy="806" r="78" />
           <circle cx="196" cy="842" r="72" />
@@ -559,7 +569,7 @@ export default function RocketArt({ scrollProgress }) {
         </g>
       </g>
       <g fill="#EDE9FE">
-        <rect x="0" y="880" width="400" height="20" fill="#EDE9FE" />
+        <circle cx="-110" cy="900" r="84" />
         <circle cx="40" cy="890" r="84" />
         <circle cx="160" cy="900" r="74" />
         <circle cx="266" cy="920" r="64" />

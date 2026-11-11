@@ -56,6 +56,70 @@ export default function WaveDivider({ variant = 'side', className = '', scrollPr
   const bottomD = useTransform(progress, [0, 0.85], [bottomStart, bottomEnd]);
   const bottomWaveY = useTransform(progress, [0, 0.85], [0, 4]);
 
+  if (variant === 'tablet') {
+    return (
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 834 90"
+        preserveAspectRatio="none"
+        style={{
+          position: 'absolute',
+          left: 0,
+          bottom: '-1px',
+          width: '100%',
+          height: '90px',
+          display: 'block',
+          zIndex: 2,
+        }}
+        className={className}
+      >
+        <path
+          d="M0,40 C140,96 300,6 470,34 C620,58 720,20 834,44 L834,90 L0,90 Z"
+          fill="#FAFAFC"
+        />
+        <path
+          d="M0,40 C140,96 300,6 470,34 C620,58 720,20 834,44"
+          fill="none"
+          stroke="#A78BFA"
+          strokeOpacity="0.45"
+          strokeWidth="1.5"
+        />
+      </svg>
+    );
+  }
+
+  if (variant === 'mobile') {
+    return (
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 390 70"
+        preserveAspectRatio="none"
+        style={{
+          position: 'absolute',
+          left: 0,
+          bottom: '-1px',
+          width: '100%',
+          height: '70px',
+          display: 'block',
+          zIndex: 2,
+        }}
+        className={className}
+      >
+        <path
+          d="M0,30 C70,70 140,4 220,28 C290,48 340,18 390,32 L390,70 L0,70 Z"
+          fill="#FAFAFC"
+        />
+        <path
+          d="M0,30 C70,70 140,4 220,28 C290,48 340,18 390,32"
+          fill="none"
+          stroke="#A78BFA"
+          strokeOpacity="0.45"
+          strokeWidth="1.5"
+        />
+      </svg>
+    );
+  }
+
   if (variant === 'bottom') {
     return (
       <motion.svg
@@ -133,14 +197,15 @@ export default function WaveDivider({ variant = 'side', className = '', scrollPr
           </g>
         </g>
 
-        {/* Layer 3: Foreground luminous launch clouds extending completely to the bottom S-curve end point (92, 1000) */}
+        {/* Layer 3: Foreground luminous launch clouds extending completely to the bottom S-curve end point (92, 1000) without vertical cutoff */}
         <g fill="#EDE9FE">
-          <rect x="70" y="950" width="105" height="50" fill="#EDE9FE" />
           <circle cx="175" cy="988" r="95" />
-          <circle cx="120" cy="980" r="85" />
-          <circle cx="75" cy="960" r="75" />
-          <circle cx="35" cy="930" r="60" />
-          <circle cx="105" cy="940" r="45" fill="#F5F3FF" />
+          <circle cx="135" cy="980" r="90" />
+          <circle cx="95" cy="970" r="80" />
+          <circle cx="60" cy="940" r="70" />
+          <circle cx="35" cy="910" r="55" />
+          <circle cx="92" cy="1000" r="65" />
+          <circle cx="110" cy="940" r="45" fill="#F5F3FF" />
         </g>
       </g>
 

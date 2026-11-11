@@ -9,13 +9,41 @@ import React from 'react';
  * - Edge latency p50 (42ms) with exact 132x34 sparkline polyline
  * - Accessible landmarks (role="region", aria-label="Live Deployment Telemetry")
  */
-export default function TelemetryCard() {
-  return (
-    <div
-      className="lp-card"
-      role="region"
-      aria-label="Live Deployment Telemetry"
-      style={{
+export default function TelemetryCard({ variant = 'desktop', className = '', style = {} }) {
+  const isMobile = variant === 'mobile';
+  const isTablet = variant === 'tablet';
+
+  const defaultStyle = isMobile
+    ? {
+        position: 'absolute',
+        left: '16px',
+        bottom: '26px',
+        zIndex: 4,
+        width: '262px',
+        padding: '14px',
+        borderRadius: '16px',
+        background: 'rgba(255, 255, 255, 0.76)',
+        backdropFilter: 'blur(18px) saturate(1.4)',
+        WebkitBackdropFilter: 'blur(18px) saturate(1.4)',
+        border: '1px solid rgba(255, 255, 255, 0.75)',
+        boxShadow: '0 24px 50px -20px rgba(15, 12, 32, 0.55)',
+      }
+    : isTablet
+    ? {
+        position: 'absolute',
+        left: '32px',
+        bottom: '64px',
+        zIndex: 4,
+        width: '300px',
+        padding: '16px',
+        borderRadius: '18px',
+        background: 'rgba(255, 255, 255, 0.74)',
+        backdropFilter: 'blur(18px) saturate(1.4)',
+        WebkitBackdropFilter: 'blur(18px) saturate(1.4)',
+        border: '1px solid rgba(255, 255, 255, 0.75)',
+        boxShadow: '0 24px 50px -20px rgba(15, 12, 32, 0.5)',
+      }
+    : {
         padding: '18px',
         borderRadius: '18px',
         background: 'rgba(255, 255, 255, 0.74)',
@@ -24,6 +52,16 @@ export default function TelemetryCard() {
         border: '1px solid rgba(255, 255, 255, 0.75)',
         boxShadow:
           '0 24px 50px -20px rgba(15, 12, 32, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.4) inset',
+      };
+
+  return (
+    <div
+      className={`lp-card ${className}`}
+      role="region"
+      aria-label="Live Deployment Telemetry"
+      style={{
+        ...defaultStyle,
+        ...style,
       }}
     >
       <div className="lp-card-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
