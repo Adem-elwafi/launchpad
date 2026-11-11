@@ -1,137 +1,163 @@
-import React, { useSyncExternalStore } from 'react';
-import { motion, useTransform, useReducedMotion, useMotionValue } from 'framer-motion';
+import React, { useSyncExternalStore } from 'react'
+import { motion, useTransform, useReducedMotion, useMotionValue, MotionValue } from 'framer-motion'
 
-function subscribeDesktop(callback) {
-  const media = window.matchMedia('(min-width: 768px)');
-  media.addEventListener('change', callback);
-  return () => media.removeEventListener('change', callback);
+function subscribeDesktop(callback: () => void) {
+  const media = window.matchMedia('(min-width: 768px)')
+  media.addEventListener('change', callback)
+  return () => media.removeEventListener('change', callback)
 }
 
 function getDesktopSnapshot() {
-  return window.matchMedia('(min-width: 768px)').matches;
+  return window.matchMedia('(min-width: 768px)').matches
 }
 
 function getDesktopServerSnapshot() {
-  return false;
+  return false
+}
+
+export interface RocketArtProps {
+  scrollProgress?: MotionValue<number> | null
+  viewBox?: string
+  preserveAspectRatio?: string
+  className?: string
+  style?: React.CSSProperties
 }
 
 /**
  * RocketArt component
- * 1:1 Pixel-perfect SVG artwork from Claude Design reference prototype with
- * Signature Move 1 Rocket Launch Scrub:
- * - Handcrafted responsive cosmic SVG (viewBox 0 0 720 900)
- * - Sky glow & satellite orbit with animateMotion + subtle parallax drift
- * - Constellations & dust dots with multi-depth parallax
- * - 4-point twinkling stars (.lp-tw) & cross sparkles
- * - Trajectory dash line (.lp-traj) & dynamically expanding exhaust plume
- * - Ascending rocket scrubbed along diagonal trajectory (translate x,y and pitch rotate)
- * - Dynamic flame layers scale & glow brightening driven by weighted spring physics
- * - Ground hill, launch clouds (.lp-drift, .lp-drift-b)
- * - Astronaut developer on ridge looking through telescope
- * - Full reduced-motion and mobile (< 1024px) fallback to static/idle hover state
+ * Handcrafted cosmic SVG artwork featuring:
+ * - Metallic white rocket with indigo nose cone, cyan band, and glass cockpit launching diagonally
+ * - Layered flame (yellow -> coral -> violet)
+ * - UNIFIED billowing launch clouds (zero box seams, flowing organically under telemetry card)
+ * - Astronaut developer with telescope on a ridge
+ * - Twinkling 4-point stars, cross sparkles, constellation, dashed orbit ring
  */
-export default function RocketArt({
+export const RocketArt: React.FC<RocketArtProps> = ({
   scrollProgress,
-  viewBox="0 0 720 900",
-  preserveAspectRatio = "xMinYMax slice",
-  className = "",
-  style = {}
-}) {
-  const fallbackProgress = useMotionValue(0);
-  const progress = scrollProgress || fallbackProgress;
-  const shouldReduceMotion = useReducedMotion();
+  viewBox = '0 0 720 900',
+  preserveAspectRatio = 'xMinYMax slice',
+  className = '',
+  style = {},
+}) => {
+  const fallbackProgress = useMotionValue(0)
+  const progress = scrollProgress || fallbackProgress
+  const shouldReduceMotion = useReducedMotion()
   const isDesktop = useSyncExternalStore(
     subscribeDesktop,
     getDesktopSnapshot,
     getDesktopServerSnapshot
-  );
+  )
 
-  const isScrollyActive = Boolean(scrollProgress) && isDesktop && !shouldReduceMotion;
+  const isScrollyActive = Boolean(scrollProgress) && isDesktop && !shouldReduceMotion
 
-  // Move 1 Scrollytelling physics (0 to 0.6 scroll progress)
-  // Rocket trajectory scrub
-  const rocketY = useTransform(progress, [0, 0.6], [0, -280]);
-  const rocketX = useTransform(progress, [0, 0.6], [0, 24]);
-  const rocketRotate = useTransform(progress, [0, 0.6], [0, 4.5]);
+  // Trajectory and physics
+  const rocketY = useTransform(progress, [0, 0.6], [0, -280])
+  const rocketX = useTransform(progress, [0, 0.6], [0, 24])
+  const rocketRotate = useTransform(progress, [0, 0.6], [0, 4.5])
 
   // Flame dynamics
-  const flameScaleY = useTransform(progress, [0, 0.6], [1, 1.9]);
-  const flameGlowScale = useTransform(progress, [0, 0.6], [1, 2.2]);
-  const flameGlowOpacity = useTransform(progress, [0, 0.6], [0.65, 1]);
+  const flameScaleY = useTransform(progress, [0, 0.6], [1, 1.9])
+  const flameGlowScale = useTransform(progress, [0, 0.6], [1, 2.2])
+  const flameGlowOpacity = useTransform(progress, [0, 0.6], [0.65, 1])
 
-  // Exhaust plume expansion
-  const exhaustScale = useTransform(progress, [0, 0.6], [1, 1.45]);
-  const exhaustOpacity = useTransform(progress, [0, 0.6], [0.75, 1]);
-  const exhaustY = useTransform(progress, [0, 0.6], [0, 30]);
+  // Exhaust plume
+  const exhaustScale = useTransform(progress, [0, 0.6], [1, 1.45])
+  const exhaustOpacity = useTransform(progress, [0, 0.6], [0.75, 1])
+  const exhaustY = useTransform(progress, [0, 0.6], [0, 30])
 
-  // Parallax depth drift layers
-  const constellationY = useTransform(progress, [0, 0.6], [0, 48]);
-  const constellationX = useTransform(progress, [0, 0.6], [0, -16]);
-  const dustY = useTransform(progress, [0, 0.6], [0, 80]);
-  const dustX = useTransform(progress, [0, 0.6], [0, -28]);
-  const starsY = useTransform(progress, [0, 0.6], [0, 32]);
-  const orbitY = useTransform(progress, [0, 0.6], [0, 18]);
+  // Parallax layers
+  const constellationY = useTransform(progress, [0, 0.6], [0, 48])
+  const constellationX = useTransform(progress, [0, 0.6], [0, -16])
+  const dustY = useTransform(progress, [0, 0.6], [0, 80])
+  const dustX = useTransform(progress, [0, 0.6], [0, -28])
+  const starsY = useTransform(progress, [0, 0.6], [0, 32])
+  const orbitY = useTransform(progress, [0, 0.6], [0, 18])
 
   return (
     <svg
       className={`lp-art ${className}`}
       role="img"
-      aria-label="A white rocket launching diagonally through a starry violet sky above launch clouds, watched by an astronaut developer with a telescope"
+      aria-label="A metallic white rocket with indigo nose cone, cyan band, and glass cockpit launching diagonally through a starry sky above billowing launch clouds, watched by an astronaut developer with a telescope"
       viewBox={viewBox}
       preserveAspectRatio={preserveAspectRatio}
-      style={style}
+      style={{ overflow: 'visible', ...style }}
     >
       <defs>
+        {/* Fuselage metallic gradient */}
         <linearGradient id="lpBody" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor="#FFFFFF" />
           <stop offset="0.5" stopColor="#F1F5F9" />
           <stop offset="1" stopColor="#B8C2D3" />
         </linearGradient>
+
+        {/* Nose cone gradient */}
         <linearGradient id="lpNose" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#A5B4FC" />
           <stop offset="1" stopColor="#4F46E5" />
         </linearGradient>
+
+        {/* Fin gradient */}
         <linearGradient id="lpFin" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#6366F1" />
           <stop offset="1" stopColor="#312E81" />
         </linearGradient>
+
+        {/* Cockpit glass radial */}
         <radialGradient id="lpGlass" cx="0.35" cy="0.35" r="0.75">
           <stop offset="0" stopColor="#A5F3FC" />
           <stop offset="0.45" stopColor="#22D3EE" />
           <stop offset="0.8" stopColor="#4F46E5" />
           <stop offset="1" stopColor="#1E1B4B" />
         </radialGradient>
+
+        {/* Foreground cloud fade: lilac -> page background so the hero bottom has no hard edge */}
+        <linearGradient id="lpCloudFade" gradientUnits="userSpaceOnUse" x1="0" y1="850" x2="0" y2="900">
+          <stop offset="0" stopColor="#EDE9FE" />
+          <stop offset="1" stopColor="#FAFAFC" />
+        </linearGradient>
+
+        {/* Sky glow */}
         <radialGradient id="lpSkyGlow" cx="0.5" cy="0.5" r="0.5">
           <stop offset="0" stopColor="#7C3AED" stopOpacity="0.38" />
           <stop offset="1" stopColor="#7C3AED" stopOpacity="0" />
         </radialGradient>
+
+        {/* Trail smoke */}
         <linearGradient id="lpTrail" gradientUnits="userSpaceOnUse" x1="239" y1="552" x2="80" y2="760">
           <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.75" />
           <stop offset="0.4" stopColor="#DDD6FE" stopOpacity="0.45" />
           <stop offset="1" stopColor="#C4B5FD" stopOpacity="0" />
         </linearGradient>
+
+        {/* Visor gradient */}
         <linearGradient id="lpVisor" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#67E8F9" />
           <stop offset="0.5" stopColor="#6366F1" />
           <stop offset="1" stopColor="#1E1B4B" />
         </linearGradient>
+
+        {/* Ground ridge */}
         <linearGradient id="lpHill" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#2E1C6B" />
           <stop offset="1" stopColor="#1A1045" />
         </linearGradient>
+
+        {/* Filters */}
         <filter id="lpBlur" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="9" />
         </filter>
         <filter id="lpSoft" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="2.5" />
         </filter>
+
+        {/* 4-point star path */}
         <path
           id="lpStar"
           d="M0,-9 C1.2,-2.4 2.4,-1.2 9,0 C2.4,1.2 1.2,2.4 0,9 C-1.2,2.4 -2.4,1.2 -9,0 C-2.4,-1.2 -1.2,-2.4 0,-9 Z"
         />
       </defs>
 
-      {/* sky glow + orbit with subtle parallax drift */}
+      {/* Sky glow + orbit with subtle parallax drift */}
       <motion.g style={isScrollyActive ? { y: orbitY } : undefined}>
         <circle cx="470" cy="330" r="300" fill="url(#lpSkyGlow)" />
         <g transform="rotate(-18 470 330)">
@@ -174,7 +200,7 @@ export default function RocketArt({
         />
       </motion.g>
 
-      {/* constellation with depth parallax */}
+      {/* Constellation with depth parallax */}
       <motion.g style={isScrollyActive ? { x: constellationX, y: constellationY } : undefined}>
         <g stroke="#C4B5FD" strokeOpacity="0.32" strokeWidth="1" fill="none">
           <path d="M548,74 L604,118 L676,132 L652,196 L604,118" />
@@ -191,7 +217,7 @@ export default function RocketArt({
         </g>
       </motion.g>
 
-      {/* dust dots with foreground parallax */}
+      {/* Dust dots with foreground parallax */}
       <motion.g style={isScrollyActive ? { x: dustX, y: dustY } : undefined} fill="#FFFFFF">
         <circle cx="40" cy="60" r="1.2" opacity="0.6" />
         <circle cx="260" cy="40" r="1" opacity="0.5" />
@@ -207,7 +233,7 @@ export default function RocketArt({
         <circle cx="100" cy="600" r="1.1" opacity="0.4" />
       </motion.g>
 
-      {/* twinkling 4-point stars with subtle parallax */}
+      {/* Twinkling 4-point stars with subtle parallax */}
       <motion.g style={isScrollyActive ? { y: starsY } : undefined}>
         <g fill="#FFFFFF">
           <g transform="translate(96 96) scale(1.1)">
@@ -269,7 +295,7 @@ export default function RocketArt({
           </g>
         </g>
 
-        {/* cross sparkles */}
+        {/* Cross sparkles */}
         <g stroke="#A5F3FC" strokeWidth="1.5" strokeLinecap="round">
           <g transform="translate(166 260)">
             <g className="lp-tw" style={{ animationDelay: '0.6s' }}>
@@ -294,7 +320,7 @@ export default function RocketArt({
         </g>
       </motion.g>
 
-      {/* trajectory */}
+      {/* Trajectory dashed arc */}
       <path
         className="lp-traj"
         d="M70,820 C150,700 220,600 300,500 S500,230 640,70"
@@ -305,7 +331,7 @@ export default function RocketArt({
         strokeDasharray="3 9"
       />
 
-      {/* dynamically expanding exhaust plume with Gaussian blur filter */}
+      {/* Dynamically expanding exhaust plume */}
       <motion.g
         style={
           isScrollyActive
@@ -330,7 +356,7 @@ export default function RocketArt({
         />
       </motion.g>
 
-      {/* ROCKET (Ascends dynamically along diagonal flight vector) */}
+      {/* METALLIC WHITE ROCKET (Ascends diagonally along trajectory) */}
       <g transform="translate(452 318) rotate(42) scale(0.94)">
         <motion.g
           style={
@@ -345,7 +371,7 @@ export default function RocketArt({
           }
         >
           <g className="lp-float">
-            {/* flame glow expands dynamically */}
+            {/* Flame glow */}
             <motion.g
               className="lp-glow"
               style={
@@ -366,7 +392,7 @@ export default function RocketArt({
               />
             </motion.g>
 
-            {/* flame layers expand and brighten dynamically */}
+            {/* Layered flames: yellow -> coral -> violet */}
             <motion.g
               style={
                 isScrollyActive
@@ -377,23 +403,27 @@ export default function RocketArt({
                   : undefined
               }
             >
+              {/* Violet outer flame */}
               <path
                 className="lp-flame-slow"
                 d="M-30,146 C-36,202 -14,252 0,306 C14,252 36,202 30,146 Z"
                 fill="#8B5CF6"
                 opacity="0.92"
               />
+              {/* Coral middle flame */}
               <path
                 className="lp-flame"
                 d="M-23,146 C-26,192 -10,230 0,268 C10,230 26,192 23,146 Z"
                 fill="#FB7185"
               />
+              {/* Flame yellow inner flame */}
               <path
                 className="lp-flame"
                 d="M-14,146 C-15,176 -6,202 0,226 C6,202 15,176 14,146 Z"
                 fill="#FDE68A"
                 style={{ animationDelay: '.08s' }}
               />
+              {/* White flame core */}
               <path
                 d="M-6,146 C-6,162 -2,174 0,186 C2,174 6,162 6,146 Z"
                 fill="#FFFFFF"
@@ -401,7 +431,7 @@ export default function RocketArt({
               />
             </motion.g>
 
-            {/* fins */}
+            {/* Fins */}
             <path
               d="M-50,34 C-80,56 -98,98 -100,146 C-88,130 -70,120 -50,116 Z"
               fill="url(#lpFin)"
@@ -418,11 +448,11 @@ export default function RocketArt({
               strokeWidth="1.5"
             />
 
-            {/* nozzle */}
+            {/* Nozzle */}
             <path d="M-30,124 L30,124 L24,148 L-24,148 Z" fill="#475569" />
             <path d="M-24,148 L24,148" stroke="#1E293B" strokeWidth="3" />
 
-            {/* fuselage */}
+            {/* Metallic white fuselage */}
             <path
               d="M0,-172 C42,-132 54,-60 54,18 L54,108 C54,120 46,126 36,126 L-36,126 C-46,126 -54,120 -54,108 L-54,18 C-54,-60 -42,-132 0,-172 Z"
               fill="url(#lpBody)"
@@ -432,13 +462,15 @@ export default function RocketArt({
               fill="#94A3B8"
               opacity="0.28"
             />
-            {/* nose cone */}
+
+            {/* Indigo nose cone */}
             <path
               d="M0,-172 C22,-152 35,-124 42,-94 L-42,-94 C-35,-124 -22,-152 0,-172 Z"
               fill="url(#lpNose)"
             />
             <path d="M-42,-94 L42,-94" stroke="#E0E7FF" strokeWidth="2" />
-            {/* cockpit */}
+
+            {/* Glass cockpit with cyan reflection */}
             <circle cx="0" cy="-38" r="27" fill="#E0E7FF" />
             <circle cx="0" cy="-38" r="21" fill="url(#lpGlass)" />
             <path
@@ -450,19 +482,23 @@ export default function RocketArt({
               opacity="0.85"
             />
             <circle cx="0" cy="-38" r="27" fill="none" stroke="#6366F1" strokeWidth="1.5" />
-            {/* accent bands */}
+
+            {/* Cyan accent band */}
             <rect x="-54" y="36" width="108" height="9" fill="#22D3EE" />
             <rect x="-54" y="48" width="108" height="3" fill="#6366F1" />
             <path d="M-54,96 L54,96" stroke="#CBD5E1" strokeWidth="1.5" />
+
             <g fill="#94A3B8">
               <circle cx="-38" cy="72" r="1.6" />
               <circle cx="-24" cy="72" r="1.6" />
               <circle cx="24" cy="72" r="1.6" />
               <circle cx="38" cy="72" r="1.6" />
             </g>
-            {/* centre fin */}
+
+            {/* Centre fin */}
             <path d="M-5,64 L5,64 L5,150 C5,154 -5,154 -5,150 Z" fill="#4338CA" />
-            {/* rim light */}
+
+            {/* Rim highlight */}
             <path
               d="M-6,-164 C-34,-126 -48,-60 -48,18"
               fill="none"
@@ -475,7 +511,7 @@ export default function RocketArt({
         </motion.g>
       </g>
 
-      {/* ground hill (right) */}
+      {/* Ground hill on the right */}
       <path d="M360,900 C400,812 520,770 720,782 L720,900 Z" fill="url(#lpHill)" />
       <path
         d="M392,846 C440,800 540,774 720,782"
@@ -485,9 +521,9 @@ export default function RocketArt({
         strokeWidth="1.5"
       />
 
-      {/* ASTRONAUT DEVELOPER + TELESCOPE */}
+      {/* ASTRONAUT DEVELOPER WITH TELESCOPE ON RIDGE */}
       <g transform="translate(596 784) scale(1.12)">
-        {/* telescope */}
+        {/* Telescope tripod */}
         <g stroke="#64748B" strokeWidth="3" strokeLinecap="round">
           <path d="M-62,-62 L-82,0" />
           <path d="M-62,-62 L-44,0" />
@@ -501,21 +537,25 @@ export default function RocketArt({
           <rect x="8" y="-4" width="12" height="8" rx="2" fill="#475569" />
         </g>
         <circle cx="-62" cy="-66" r="5" fill="#475569" />
-        {/* backpack */}
+
+        {/* Life support backpack */}
         <rect x="4" y="-108" width="18" height="52" rx="7" fill="#CBD5E1" />
         <rect x="8" y="-100" width="10" height="4" rx="2" fill="#22D3EE" />
-        {/* legs */}
+
+        {/* Suit legs */}
         <rect x="-18" y="-52" width="14" height="46" rx="6" fill="#E2E8F0" />
         <rect x="2" y="-52" width="14" height="46" rx="6" fill="#F8FAFC" />
         <rect x="-21" y="-10" width="19" height="11" rx="4" fill="#4338CA" />
         <rect x="0" y="-10" width="19" height="11" rx="4" fill="#4338CA" />
-        {/* torso */}
+
+        {/* Suit torso */}
         <rect x="-24" y="-112" width="44" height="66" rx="16" fill="#F8FAFC" />
         <path d="M-24,-70 L20,-70" stroke="#CBD5E1" strokeWidth="1.5" />
         <rect x="-14" y="-96" width="22" height="16" rx="4" fill="#312E81" />
         <circle cx="-8" cy="-88" r="2.2" fill="#22D3EE" />
         <circle cx="0" cy="-88" r="2.2" fill="#FB7185" />
-        {/* arm to telescope */}
+
+        {/* Arm to telescope */}
         <path
           d="M-18,-98 C-32,-90 -40,-80 -46,-72"
           fill="none"
@@ -524,7 +564,8 @@ export default function RocketArt({
           strokeLinecap="round"
         />
         <circle cx="-47" cy="-71" r="6.5" fill="#4338CA" />
-        {/* helmet */}
+
+        {/* Astronaut helmet & cyan visor */}
         <circle cx="-2" cy="-136" r="27" fill="#F8FAFC" />
         <circle cx="-2" cy="-136" r="27" fill="none" stroke="#CBD5E1" strokeWidth="1.5" />
         <ellipse
@@ -547,35 +588,53 @@ export default function RocketArt({
         <circle cx="20.5" cy="-174" r="3" fill="#FB7185" />
       </g>
 
-      {/* launch clouds (flowing organically without vertical cutoff rect) */}
+      {/* =========================================================================
+          UNIFIED LAUNCH CLOUD SYSTEM (COMPLETE FIX FOR VERTICAL SEAM CUT-OFF)
+          Rendered as one continuous multi-layered organic puff cloud mass across
+          the entire launch base, extending smoothly past the S-curve boundary
+          with zero clipping boxes, zero duplicate cutoffs, and zero opacity seams!
+          ========================================================================= */}
+      
+      {/* Cloud Layer 1: Soft deep shadow clouds (Lilac #C4B5FD, opacity 0.5) */}
       <g className="lp-drift-b">
         <g fill="#C4B5FD" opacity="0.5">
-          <circle cx="-140" cy="790" r="80" />
-          <circle cx="-40" cy="770" r="80" />
-          <circle cx="40" cy="760" r="86" />
-          <circle cx="150" cy="742" r="72" />
-          <circle cx="250" cy="790" r="74" />
-          <circle cx="350" cy="836" r="66" />
+          <circle cx="-160" cy="800" r="95" />
+          <circle cx="-80" cy="780" r="88" />
+          <circle cx="0" cy="760" r="86" />
+          <circle cx="80" cy="745" r="80" />
+          <circle cx="160" cy="742" r="76" />
+          <circle cx="250" cy="780" r="76" />
+          <circle cx="340" cy="830" r="70" />
         </g>
       </g>
+
+      {/* Cloud Layer 2: Mid-tone billowing launch clouds (Lilac #DDD6FE) */}
       <g className="lp-drift">
         <g fill="#DDD6FE">
-          <circle cx="-150" cy="850" r="90" />
-          <circle cx="-10" cy="830" r="96" />
-          <circle cx="104" cy="806" r="78" />
-          <circle cx="196" cy="842" r="72" />
-          <circle cx="300" cy="872" r="66" />
-          <circle cx="402" cy="900" r="56" />
+          <circle cx="-150" cy="855" r="102" />
+          <circle cx="-60" cy="840" r="98" />
+          <circle cx="30" cy="820" r="90" />
+          <circle cx="115" cy="810" r="82" />
+          <circle cx="205" cy="835" r="78" />
+          <circle cx="295" cy="865" r="72" />
+          <circle cx="390" cy="895" r="60" />
         </g>
       </g>
-      <g fill="#EDE9FE">
-        <circle cx="-110" cy="900" r="84" />
-        <circle cx="40" cy="890" r="84" />
-        <circle cx="160" cy="900" r="74" />
-        <circle cx="266" cy="920" r="64" />
-        <circle cx="350" cy="934" r="50" />
-        <circle cx="120" cy="860" r="40" fill="#F5F3FF" />
+
+      {/* Cloud Layer 3: Foreground luminous launch clouds (Lilac #EDE9FE & #F5F3FF) */}
+      <g fill="url(#lpCloudFade)">
+        <circle cx="-130" cy="910" r="95" />
+        <circle cx="-40" cy="900" r="90" />
+        <circle cx="50" cy="885" r="86" />
+        <circle cx="140" cy="895" r="78" />
+        <circle cx="230" cy="915" r="70" />
+        <circle cx="320" cy="930" r="56" />
+        {/* Luminous cloud highlights */}
+        <circle cx="40" cy="855" r="44" fill="#F5F3FF" opacity="0.85" />
+        <circle cx="130" cy="860" r="38" fill="#F5F3FF" opacity="0.8" />
       </g>
     </svg>
-  );
+  )
 }
+
+export default RocketArt

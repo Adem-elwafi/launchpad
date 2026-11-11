@@ -227,6 +227,13 @@ a.lp-btn-white:hover {
   display: block;
 }
 
+/* Desktop: the art (incl. launch clouds) must sit above the S-curve wave so the
+   clouds flow across the wave boundary instead of being cut by it. */
+.lp-right > .lp-art {
+  z-index: 3;
+  pointer-events: none;
+}
+
 /* Animations from reference prototype */
 @keyframes lp-float {
   0%, 100% { transform: translate(0, 0); }
@@ -390,4 +397,46 @@ a.lp-btn-white:hover {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Hero scrolled out of view: freeze infinite CSS animations (toggled from HeroSection) */
+.lp-offscreen,
+.lp-offscreen * {
+  animation-play-state: paused !important;
+}
+
+/* =========================================================
+   Themed scrollbar (matches the LaunchPad celestial violet palette)
+   ========================================================= */
+/* Firefox only: Chromium would ignore the ::-webkit-scrollbar styling below if these were set */
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: #8B5CF6 #EEEAF8;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #EEEAF8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #A78BFA 0%, #6D28D9 100%);
+  border-radius: 999px;
+  /* inset look: track-coloured border around the thumb */
+  border: 3px solid #EEEAF8;
+  min-height: 48px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #8B5CF6 0%, #5B21B6 100%);
+}
+
+::-webkit-scrollbar-corner {
+  background: #EEEAF8;
 }

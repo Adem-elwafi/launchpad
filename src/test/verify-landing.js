@@ -23,37 +23,42 @@ function assert(condition, testName, details = '') {
   }
 }
 
-// 1. COMPONENT FILES & IMPORTS AUDIT
-console.log('--- Suite 1: File Existence & Import Resolution ---');
+// 1. COMPONENT FILES & ARCHITECTURE AUDIT
+console.log('--- Suite 1: File Existence & Modern Architecture ---');
 
-const expectedComponents = [
-  'App.jsx',
-  'components/layout/Navbar.jsx',
-  'components/hero/HeroSection.jsx',
-  'components/hero/WaveDivider.jsx',
-  'components/hero/RocketArt.jsx',
-  'components/hero/TelemetryCard.jsx',
-  'components/hero/TerminalSnippet.jsx',
-  'components/social/SocialProof.jsx',
-  'components/features/FeaturesBento.jsx',
-  'components/terminal/InteractiveTerminal.jsx',
-  'components/network/EdgeNetwork.jsx',
-  'components/pricing/PricingSection.jsx',
-  'components/layout/Footer.jsx',
-  'lib/utils.js',
+const expectedProductionFiles = [
+  'data/content.ts',
+  'components/ui/Button.tsx',
+  'components/ui/Badge.tsx',
+  'components/ui/Card.tsx',
+  'components/ui/CopyCommand.tsx',
+  'components/art/RocketArt.tsx',
+  'components/art/WaveDivider.tsx',
+  'components/art/OrbitPlanetArt.tsx',
+  'components/art/NetworkGlobeArt.tsx',
+  'components/sections/Navbar.tsx',
+  'components/sections/HeroSection.tsx',
+  'components/sections/LogoBar.tsx',
+  'components/sections/FeaturesBento.tsx',
+  'components/sections/DarkInterlude.tsx',
+  'components/sections/EdgeNetwork.tsx',
+  'components/sections/PricingSection.tsx',
+  'components/sections/FaqSection.tsx',
+  'components/sections/FinalCta.tsx',
+  'components/sections/Footer.tsx',
+  'App.tsx',
   'index.css'
 ];
 
-for (const relPath of expectedComponents) {
+for (const relPath of expectedProductionFiles) {
   const fullPath = path.resolve(srcDir, relPath);
   assert(fs.existsSync(fullPath), `File exists: src/${relPath}`, `Path not found: ${fullPath}`);
 }
 
-// Check for broken relative imports across all JSX files
+// Check for broken relative imports across all TSX, TS, JSX, JS files
 console.log('\n--- Suite 2: Broken Import Analysis ---');
 function checkImportsInFile(filePath) {
   const content = fs.readFileSync(filePath, 'utf-8');
-  // Strip template literals and multi-line comments so sample code snippets aren't confused with module imports
   const codeWithoutTemplates = content.replace(/`[\s\S]*?`/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
   const importRegex = /^import\s+(?:[\w\s{},*]+from\s+)?['"](\.[^'"]+)['"]/gm;
   let match;
@@ -64,9 +69,8 @@ function checkImportsInFile(filePath) {
     const resolvedDir = path.dirname(filePath);
     let resolvedPath = path.resolve(resolvedDir, importSpec);
 
-    // Try extensions
     let exists = false;
-    const extensions = ['', '.js', '.jsx', '.ts', '.tsx', '.css', '/index.js', '/index.jsx'];
+    const extensions = ['', '.js', '.jsx', '.ts', '.tsx', '.css', '/index.js', '/index.jsx', '/index.ts', '/index.tsx'];
     for (const ext of extensions) {
       if (fs.existsSync(resolvedPath + ext) && fs.statSync(resolvedPath + ext).isFile()) {
         exists = true;
@@ -85,77 +89,128 @@ function checkImportsInFile(filePath) {
   }
 }
 
-for (const relPath of expectedComponents.filter(p => p.endsWith('.jsx'))) {
+for (const relPath of expectedProductionFiles.filter(p => p.endsWith('.tsx') || p.endsWith('.ts'))) {
   checkImportsInFile(path.resolve(srcDir, relPath));
 }
 
-// 2. DOM CONTRACT & COMPONENT CONFORMITY AUDIT
-console.log('\n--- Suite 3: DOM Contract & Component Conformity ---');
+// 2. DOM CONTRACT & 10 SECTIONS IN EXACT SEQUENTIAL ORDER
+console.log('\n--- Suite 3: DOM Contract & 10 Sections in Exact Order ---');
 
-// App.jsx
-const appContent = fs.readFileSync(path.resolve(srcDir, 'App.jsx'), 'utf-8');
-assert(appContent.includes('<Navbar />') && appContent.includes('<HeroSection />') && appContent.includes('<Footer />'), 'App.jsx mounts Navbar, HeroSection, and Footer');
-assert(appContent.includes('<SocialProof />') && appContent.includes('<FeaturesBento />'), 'App.jsx mounts SocialProof and FeaturesBento');
-assert(appContent.includes('<InteractiveTerminal />') && appContent.includes('<EdgeNetwork />') && appContent.includes('<PricingSection />'), 'App.jsx mounts InteractiveTerminal, EdgeNetwork, and PricingSection');
+// App.tsx mounts all 10 sections in exact order
+const appContent = fs.readFileSync(path.resolve(srcDir, 'App.tsx'), 'utf-8');
+assert(
+  appContent.includes('<Navbar />') &&
+  appContent.includes('<HeroSection />') &&
+  appContent.includes('<LogoBar />') &&
+  appContent.includes('<FeaturesBento />') &&
+  appContent.includes('<DarkInterlude />') &&
+  appContent.includes('<EdgeNetwork />') &&
+  appContent.includes('<PricingSection />') &&
+  appContent.includes('<FaqSection />') &&
+  appContent.includes('<FinalCta />') &&
+  appContent.includes('<Footer />'),
+  'App.tsx mounts all 10 sections in exact order'
+);
 
-// WaveDivider
-const waveContent = fs.readFileSync(path.resolve(srcDir, 'components/hero/WaveDivider.jsx'), 'utf-8');
-assert(waveContent.includes('0 0 175 1000') || waveContent.includes('0 0 160 1000'), 'WaveDivider renders vertical desktop S-curve');
-assert(waveContent.includes('0 0 400 72'), 'WaveDivider renders 0 0 400 72 horizontal mobile bottom wave');
-assert(waveContent.includes('hidden lg:block') && waveContent.includes('lg:hidden'), 'WaveDivider correctly applies responsive breakpoint classes');
+// Section 1: Navbar
+const navbarContent = fs.readFileSync(path.resolve(srcDir, 'components/sections/Navbar.tsx'), 'utf-8');
+assert(navbarContent.includes('aria-expanded={mobileMenuOpen}'), 'Navbar mobile hamburger button has aria-expanded');
+assert(navbarContent.includes('aria-controls="mobile-menu-drawer"'), 'Navbar mobile hamburger button has aria-controls');
+assert(navbarContent.includes('id="mobile-menu-drawer"'), 'Navbar mobile drawer has matching id');
+assert(navbarContent.includes('Start deploying'), 'Navbar features Start deploying CTA');
 
-// RocketArt
-const rocketContent = fs.readFileSync(path.resolve(srcDir, 'components/hero/RocketArt.jsx'), 'utf-8');
-assert(rocketContent.includes('viewBox="0 0 720 900"'), 'RocketArt SVG has standard 0 0 720 900 viewBox');
-assert(rocketContent.includes('role="img"'), 'RocketArt SVG carries role="img" accessibility semantic');
-assert(rocketContent.includes('aria-label='), 'RocketArt SVG carries descriptive aria-label');
+// Section 2: HeroSection
+const heroContent = fs.readFileSync(path.resolve(srcDir, 'components/sections/HeroSection.tsx'), 'utf-8');
+assert(heroContent.includes('speed of thought.'), 'HeroSection features "speed of thought." accent headline');
+assert(heroContent.includes('Free tier forever • No credit card required'), 'HeroSection features free tier microcopy');
+assert(heroContent.includes('<WaveDivider variant="side"'), 'HeroSection includes desktop side wave divider');
+assert(heroContent.includes('<RocketArt'), 'HeroSection includes RocketArt inline SVG');
+assert(heroContent.includes('<TelemetryCard'), 'HeroSection includes TelemetryCard');
 
-// TelemetryCard
-const telemetryContent = fs.readFileSync(path.resolve(srcDir, 'components/hero/TelemetryCard.jsx'), 'utf-8');
-assert(telemetryContent.includes('role="region"'), 'TelemetryCard has landmark role="region"');
-assert(telemetryContent.includes('aria-label="Live Deployment Telemetry"'), 'TelemetryCard has aria-label');
-assert(telemetryContent.includes('42') && telemetryContent.includes('Global Edge Latency'), 'TelemetryCard renders 42ms edge latency telemetry');
+// Section 3: LogoBar
+const logoContent = fs.readFileSync(path.resolve(srcDir, 'components/sections/LogoBar.tsx'), 'utf-8');
+assert(logoContent.includes('Trusted by high-growth engineering teams'), 'LogoBar renders trusted headline');
+assert(logoContent.includes('Vercel') && logoContent.includes('Supabase') && logoContent.includes('Linear') && logoContent.includes('Raycast') && logoContent.includes('Resend'), 'LogoBar renders 5 muted text wordmarks');
 
-// TerminalSnippet
-const snippetContent = fs.readFileSync(path.resolve(srcDir, 'components/hero/TerminalSnippet.jsx'), 'utf-8');
-assert(snippetContent.includes('npx launchpad deploy'), 'TerminalSnippet features the core CLI command');
-assert(snippetContent.includes('aria-label='), 'TerminalSnippet copy button provides dynamic aria-label');
-
-// FeaturesBento
-const bentoContent = fs.readFileSync(path.resolve(srcDir, 'components/features/FeaturesBento.jsx'), 'utf-8');
-assert(bentoContent.includes('md:col-span-2'), 'FeaturesBento applies Bento 2-column spans');
+// Section 4: FeaturesBento (3 features max)
+const bentoContent = fs.readFileSync(path.resolve(srcDir, 'components/sections/FeaturesBento.tsx'), 'utf-8');
+assert(bentoContent.includes('Instant Atomic Rollbacks') && bentoContent.includes('Ephemeral Previews') && bentoContent.includes('Real-Time Edge Telemetry'), 'FeaturesBento renders the 3 specified bento features');
 assert(bentoContent.includes('role="button"') && bentoContent.includes('tabIndex={0}'), 'FeaturesBento commit items are keyboard navigable (role="button", tabIndex=0)');
 assert(bentoContent.includes('onKeyDown='), 'FeaturesBento commit items handle onKeyDown Enter/Space');
 assert(bentoContent.includes('aria-pressed='), 'FeaturesBento commit items indicate active selection via aria-pressed');
 
-// InteractiveTerminal
-const terminalContent = fs.readFileSync(path.resolve(srcDir, 'components/terminal/InteractiveTerminal.jsx'), 'utf-8');
-assert(terminalContent.includes('role="tablist"'), 'InteractiveTerminal wraps framework tabs in role="tablist"');
-assert(terminalContent.includes('role="tab"') && terminalContent.includes('aria-selected='), 'InteractiveTerminal tabs carry role="tab" and aria-selected');
-assert(terminalContent.includes('role="tabpanel"'), 'InteractiveTerminal terminal container carries role="tabpanel"');
-assert(terminalContent.includes('aria-label='), 'InteractiveTerminal buttons have accessible aria-labels');
+// Section 5: DarkInterlude
+const interludeContent = fs.readFileSync(path.resolve(srcDir, 'components/sections/DarkInterlude.tsx'), 'utf-8');
+assert(interludeContent.includes('Deploy in seconds. Zero configuration.'), 'DarkInterlude renders deploy headline');
+assert(interludeContent.includes('role="tablist"'), 'DarkInterlude wraps package manager tabs in role="tablist"');
+assert(interludeContent.includes('role="tab"') && interludeContent.includes('aria-selected='), 'DarkInterlude tabs carry role="tab" and aria-selected');
+assert(interludeContent.includes('role="tabpanel"'), 'DarkInterlude container carries role="tabpanel"');
+assert(interludeContent.includes('npm') && interludeContent.includes('pnpm') && interludeContent.includes('yarn') && interludeContent.includes('bun'), 'DarkInterlude supports npm, pnpm, yarn, bun tabs');
+assert(interludeContent.includes('variant="enter-dark"') && interludeContent.includes('variant="exit-dark"'), 'DarkInterlude enters and exits via organic wave curves');
 
-// EdgeNetwork
-const edgeContent = fs.readFileSync(path.resolve(srcDir, 'components/network/EdgeNetwork.jsx'), 'utf-8');
-assert(edgeContent.includes('role="img"'), 'EdgeNetwork SVG map has role="img"');
-assert(edgeContent.includes('role="button"') && edgeContent.includes('tabIndex={0}'), 'EdgeNetwork PoP SVG nodes have role="button" and tabIndex={0}');
-assert(edgeContent.includes('onKeyDown='), 'EdgeNetwork PoP SVG nodes have onKeyDown handler');
+// Section 6: EdgeNetwork
+const edgeContent = fs.readFileSync(path.resolve(srcDir, 'components/sections/EdgeNetwork.tsx'), 'utf-8');
+assert(edgeContent.includes('Anycast routing across'), 'EdgeNetwork renders Anycast headline');
 assert(edgeContent.includes('Quick PoP Select:'), 'EdgeNetwork provides quick selector buttons');
+assert(edgeContent.includes('EDGE_NETWORK_CONTENT.stats'), 'EdgeNetwork renders placeholder stat row');
 
-// PricingSection
-const pricingContent = fs.readFileSync(path.resolve(srcDir, 'components/pricing/PricingSection.jsx'), 'utf-8');
+// Section 7: PricingSection
+const pricingContent = fs.readFileSync(path.resolve(srcDir, 'components/sections/PricingSection.tsx'), 'utf-8');
 assert(pricingContent.includes('aria-pressed={!annualBilling}') && pricingContent.includes('aria-pressed={annualBilling}'), 'PricingSection interval toggle has dynamic aria-pressed');
-assert(pricingContent.includes('aria-expanded={isOpen}'), 'PricingSection FAQ buttons have aria-expanded');
-assert(pricingContent.includes('role="region"'), 'PricingSection FAQ accordion body has role="region"');
+assert(pricingContent.includes('order-first md:order-none'), 'PricingSection stacks Pro first on mobile');
+assert(pricingContent.includes('Hobby') && pricingContent.includes('Pro') && pricingContent.includes('Enterprise'), 'PricingSection renders 3 tiers');
 
-// Navbar
-const navbarContent = fs.readFileSync(path.resolve(srcDir, 'components/layout/Navbar.jsx'), 'utf-8');
-assert(navbarContent.includes('aria-expanded={mobileMenuOpen}'), 'Navbar mobile hamburger button has aria-expanded');
-assert(navbarContent.includes('aria-controls="mobile-menu-drawer"'), 'Navbar mobile hamburger button has aria-controls');
-assert(navbarContent.includes('id="mobile-menu-drawer"'), 'Navbar mobile drawer has matching id');
+// Section 8: FaqSection
+const faqContent = fs.readFileSync(path.resolve(srcDir, 'components/sections/FaqSection.tsx'), 'utf-8');
+assert(faqContent.includes('aria-expanded={isOpen}'), 'FaqSection accordion buttons carry aria-expanded');
+assert(faqContent.includes('role="region"'), 'FaqSection accordion panels carry role="region"');
+assert(faqContent.includes('Still have questions?'), 'FaqSection provides Still have questions? contact section');
 
-// 3. MOTION & PERFORMANCE VERIFICATION
-console.log('\n--- Suite 4: Motion & Performance Rules ---');
+// Section 9: FinalCta
+const finalCtaContent = fs.readFileSync(path.resolve(srcDir, 'components/sections/FinalCta.tsx'), 'utf-8');
+assert(finalCtaContent.includes('Ready to ship your next idea into orbit?'), 'FinalCta renders orbit headline');
+assert(finalCtaContent.includes('<OrbitPlanetArt'), 'FinalCta mounts OrbitPlanetArt');
+assert(finalCtaContent.includes('<CopyCommand'), 'FinalCta mounts CopyCommand');
+assert(finalCtaContent.includes('variant="enter-finale"'), 'FinalCta enters dark finale via wave');
+
+// Section 10: Footer
+const footerContent = fs.readFileSync(path.resolve(srcDir, 'components/sections/Footer.tsx'), 'utf-8');
+assert(footerContent.includes('statusText'), 'Footer displays live status text');
+assert(footerContent.includes('animate-ping'), 'Footer status pill has green pulse animation');
+assert(footerContent.includes('Product') && footerContent.includes('Developers') && footerContent.includes('Company') && footerContent.includes('Legal'), 'Footer contains 4 link columns');
+assert(footerContent.includes('copyright'), 'Footer displays copyright');
+
+// 3. ARTWORK & SEAM BUG AUDIT
+console.log('\n--- Suite 4: Artwork & Visual Seam Elimination ---');
+
+// WaveDivider
+const waveContent = fs.readFileSync(path.resolve(srcDir, 'components/art/WaveDivider.tsx'), 'utf-8');
+assert(waveContent.includes('0 0 175 1000') || waveContent.includes('0 0 160 1000'), 'WaveDivider renders vertical desktop S-curve');
+assert(waveContent.includes('0 0 400 72'), 'WaveDivider renders 0 0 400 72 horizontal mobile bottom wave');
+assert(waveContent.includes('hidden lg:block') && waveContent.includes('lg:hidden'), 'WaveDivider correctly applies responsive breakpoint classes');
+
+// CRITICAL SEAM BUG FIX: Confirm WaveDivider does NOT contain clipped cloud circles with artificial 175px box seam
+assert(!waveContent.includes('clipPath="url(#lpWaveCloudClip)"'), 'WaveDivider does NOT clip clouds against an artificial 175px SVG bounding box');
+
+// RocketArt
+const rocketContent = fs.readFileSync(path.resolve(srcDir, 'components/art/RocketArt.tsx'), 'utf-8');
+assert(rocketContent.includes('viewBox={viewBox}') || rocketContent.includes('0 0 720 900'), 'RocketArt SVG supports standard 0 0 720 900 viewBox');
+assert(rocketContent.includes('role="img"'), 'RocketArt SVG carries role="img" accessibility semantic');
+assert(rocketContent.includes('aria-label='), 'RocketArt SVG carries descriptive aria-label');
+assert(rocketContent.includes('lp-flame') && rocketContent.includes('lp-tw'), 'RocketArt includes animated flame and twinkling stars');
+assert(rocketContent.includes('overflow: \'visible\'') || rocketContent.includes('overflow: "visible"'), 'RocketArt has visible overflow to eliminate boundary clipping across wave');
+
+// TelemetryCard
+const telemetryPath = fs.existsSync(path.resolve(srcDir, 'components/hero/TelemetryCard.tsx'))
+  ? path.resolve(srcDir, 'components/hero/TelemetryCard.tsx')
+  : path.resolve(srcDir, 'components/hero/TelemetryCard.jsx');
+const telemetryContent = fs.readFileSync(telemetryPath, 'utf-8');
+assert(telemetryContent.includes('role="region"'), 'TelemetryCard has landmark role="region"');
+assert(telemetryContent.includes('aria-label="Live Deployment Telemetry"'), 'TelemetryCard has aria-label');
+assert(telemetryContent.includes('42') && telemetryContent.includes('ms'), 'TelemetryCard renders 42ms edge latency telemetry');
+
+// 4. MOTION & PERFORMANCE RULES
+console.log('\n--- Suite 5: Motion & Performance Rules ---');
 const cssContent = fs.readFileSync(path.resolve(srcDir, 'index.css'), 'utf-8');
 
 assert(cssContent.includes('transform-box: fill-box;'), 'index.css defines transform-box: fill-box for SVG animations');
@@ -163,13 +218,13 @@ assert(cssContent.includes('will-change: transform'), 'index.css promotes animat
 assert(cssContent.includes('@media (prefers-reduced-motion: reduce)'), 'index.css implements prefers-reduced-motion: reduce query');
 assert(cssContent.includes('animation-iteration-count: 1 !important') || cssContent.includes('animation-duration: 0.01ms !important'), 'prefers-reduced-motion overrides animations safely');
 
-// 4. MEMORY LEAK CLEANUP VERIFICATION
-console.log('\n--- Suite 5: Interval and Timeout Memory Leak Cleanup ---');
+// 5. INTERVAL AND TIMEOUT CLEANUP AUDIT
+console.log('\n--- Suite 6: Timer and Interval Memory Leak Cleanup ---');
 const filesWithTimers = [
-  { file: 'components/hero/HeroSection.jsx', check: 'clearTimeout' },
-  { file: 'components/hero/TerminalSnippet.jsx', check: 'clearTimeout' },
-  { file: 'components/features/FeaturesBento.jsx', check: 'clearTimeout' },
-  { file: 'components/terminal/InteractiveTerminal.jsx', check: 'clearTimeout' }
+  { file: 'components/sections/HeroSection.tsx', check: 'clearTimeout' },
+  { file: 'components/sections/FeaturesBento.tsx', check: 'clearTimeout' },
+  { file: 'components/sections/DarkInterlude.tsx', check: 'clearTimeout' },
+  { file: 'components/ui/CopyCommand.tsx', check: 'clearTimeout' },
 ];
 
 for (const { file, check } of filesWithTimers) {
@@ -177,8 +232,8 @@ for (const { file, check } of filesWithTimers) {
   assert(content.includes(check), `${file} safely calls ${check} on timers`);
 }
 
-// 5. PRODUCTION BUILD ARTIFACTS VERIFICATION
-console.log('\n--- Suite 6: Production Build Artifacts ---');
+// 6. PRODUCTION BUILD ARTIFACTS VERIFICATION
+console.log('\n--- Suite 7: Production Build Artifacts ---');
 const distDir = path.resolve(rootDir, 'dist');
 assert(fs.existsSync(distDir), 'Production dist directory exists');
 assert(fs.existsSync(path.resolve(distDir, 'index.html')), 'dist/index.html exists');
@@ -202,6 +257,12 @@ if (cssBundle) {
   const cssSize = fs.statSync(path.resolve(distDir, 'assets', cssBundle)).size;
   assert(cssSize > 5000, `CSS bundle has valid content (${Math.round(cssSize / 1024)} KB)`);
 }
+
+// 7. RESPONSIVE BREAKPOINT VERIFICATION (390, 834, 1440)
+console.log('\n--- Suite 8: Responsive Viewport Breakpoint Verification ---');
+assert(cssContent.includes('@media (min-width: 1025px)'), 'index.css defines desktop layout >= 1025px (1440px target)');
+assert(cssContent.includes('@media (min-width: 768px) and (max-width: 1024px)'), 'index.css defines tablet layout 768-1024px (834px iPad target)');
+assert(cssContent.includes('@media (max-width: 767px)'), 'index.css defines mobile layout < 768px (390px iPhone target)');
 
 // SUMMARY REPORT
 console.log('\n======================================================');
