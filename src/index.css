@@ -1,0 +1,342 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* LaunchPad Color Palette */
+  --color-canvas: #FAFAFC;
+  --color-celestial-dark: #0F0C20;
+  --color-celestial-deep: #1E124A;
+  --color-celestial-violet: #3B1E78;
+  --color-violet-primary: #6D28D9;
+  --color-cyan-glow: #22D3EE;
+  --color-emerald-accent: #10B981;
+}
+
+/* =========================================================
+   LAUNCHPAD REFERENCE PROTOTYPE CORE CSS
+   Line-by-line & pixel-by-pixel faithful implementation
+   ========================================================= */
+
+body {
+  margin: 0;
+  background: #FAFAFC;
+  color: #0F172A;
+  font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+}
+
+/* Default link styles: inherit color and remove text underline */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Navigation links inside .lp-nav-left on light background */
+.lp-nav-left a {
+  color: #475569;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.lp-nav-left a:hover {
+  color: #0F172A;
+}
+
+.lp-root * {
+  box-sizing: border-box;
+}
+
+.lp-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+  min-height: 880px;
+  position: relative;
+}
+
+.lp-left {
+  position: relative;
+  z-index: 2;
+  padding: 28px 150px 64px 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+.lp-right {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(180deg, #0F0C20 0%, #1E124A 52%, #3B1E78 100%);
+  color: #FFFFFF;
+}
+
+.lp-right a {
+  color: #DDD6FE;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.lp-right a:hover {
+  color: #FFFFFF;
+}
+
+.lp-wave-side {
+  position: absolute;
+  top: 0;
+  left: -159px;
+  width: 175px;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.lp-wave-bottom {
+  display: none;
+}
+
+.lp-mobile-logo {
+  display: none;
+}
+
+.lp-card {
+  position: absolute;
+  left: -118px;
+  bottom: 150px;
+  width: 316px;
+  z-index: 4;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s;
+}
+
+.lp-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 60px -20px rgba(15,12,32,.55), 0 0 0 1px rgba(255,255,255,.7) inset;
+}
+
+.lp-btn {
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+  cursor: pointer;
+}
+
+.lp-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow: 0 12px 28px -10px rgba(109,40,217,.65);
+}
+
+.lp-btn:active {
+  transform: translateY(0);
+}
+
+.lp-btn:focus-visible,
+.lp-copy:focus-visible,
+.lp-input:focus-visible,
+.lp-ghost:focus-visible {
+  outline: 2px solid #A78BFA;
+  outline-offset: 2px;
+}
+
+.lp-copy {
+  transition: background .2s, color .2s, border-color .2s;
+  cursor: pointer;
+}
+
+.lp-copy:hover {
+  background: rgba(255,255,255,.12);
+  color: #FFFFFF;
+  border-color: rgba(255,255,255,.28);
+}
+
+.lp-term {
+  transition: box-shadow .3s, transform .3s;
+}
+
+.lp-term:hover {
+  box-shadow: 0 24px 50px -24px rgba(15,23,42,.7), 0 0 0 1px rgba(139,92,246,.45);
+}
+
+.lp-input {
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.lp-input:focus {
+  border-color: #8B5CF6;
+  box-shadow: 0 0 0 4px rgba(139,92,246,.14);
+  outline: none;
+}
+
+.lp-ghost {
+  color: #FFFFFF !important;
+  transition: background .2s, border-color .2s, color .2s;
+}
+
+.lp-ghost:hover {
+  background: rgba(255,255,255,.1);
+  border-color: rgba(255,255,255,.4);
+  color: #FFFFFF !important;
+}
+
+/* Explicit button text protection to ensure 0 unintended color flips on hover */
+.lp-btn-primary,
+a.lp-btn-primary {
+  color: #FFFFFF !important;
+}
+.lp-btn-primary:hover,
+a.lp-btn-primary:hover {
+  color: #FFFFFF !important;
+}
+
+.lp-btn-white,
+a.lp-btn-white {
+  color: #3B1E78 !important;
+  background: #FFFFFF;
+}
+.lp-btn-white:hover,
+a.lp-btn-white:hover {
+  color: #3B1E78 !important;
+}
+
+.lp-pill-badge {
+  color: #3B1E78 !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.lp-pill-badge:hover {
+  color: #3B1E78 !important;
+}
+
+.lp-nav-link-celestial {
+  color: #DDD6FE !important;
+  transition: color 0.15s ease;
+}
+.lp-nav-link-celestial:hover {
+  color: #FFFFFF !important;
+}
+
+.lp-logo-word {
+  transition: color .2s;
+  cursor: default;
+}
+
+.lp-logo-word:hover {
+  color: #0F172A;
+}
+
+.lp-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Animations from reference prototype */
+@keyframes lp-float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(0, -14px); }
+}
+
+@keyframes lp-flicker {
+  0%, 100% { transform: scale(1, 1); }
+  20% { transform: scale(.94, 1.14); }
+  45% { transform: scale(1.05, .9); }
+  70% { transform: scale(.97, 1.08); }
+}
+
+@keyframes lp-twinkle {
+  0%, 100% { opacity: .2; transform: scale(.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes lp-drift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(12px); }
+}
+
+@keyframes lp-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(16,185,129,.55); }
+  80%, 100% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+}
+
+@keyframes lp-dash {
+  to { stroke-dashoffset: -120; }
+}
+
+@keyframes lp-glow {
+  0%, 100% { opacity: .55; }
+  50% { opacity: .9; }
+}
+
+.lp-float { animation: lp-float 4.5s ease-in-out infinite; will-change: transform; }
+.lp-flame { transform-box: fill-box; transform-origin: 50% 0; animation: lp-flicker .32s ease-in-out infinite; will-change: transform; }
+.lp-flame-slow { transform-box: fill-box; transform-origin: 50% 0; animation: lp-flicker .5s ease-in-out infinite reverse; will-change: transform; }
+.lp-tw { transform-box: fill-box; transform-origin: center; animation: lp-twinkle 3.4s ease-in-out infinite; will-change: transform, opacity; }
+.lp-drift { animation: lp-drift 9s ease-in-out infinite; will-change: transform; }
+.lp-drift-b { animation: lp-drift 12s ease-in-out infinite reverse; will-change: transform; }
+.lp-live { animation: lp-pulse 1.8s ease-out infinite; }
+.lp-traj { animation: lp-dash 6s linear infinite; }
+.lp-glow { animation: lp-glow .9s ease-in-out infinite; }
+.lp-card { will-change: transform; }
+.lp-still *, .lp-still { animation: none !important; }
+
+/* Responsive adjustments from prototype */
+@media (max-width: 1180px) {
+  .lp-left {
+    padding: 28px 120px 56px 48px;
+  }
+  .lp-card {
+    left: -96px;
+    width: 290px;
+  }
+}
+
+@media (max-width: 900px) {
+  .lp-hero {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+  .lp-right {
+    order: -1;
+    height: 560px;
+  }
+  .lp-wave-side {
+    display: none;
+  }
+  .lp-wave-bottom {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 72px;
+    z-index: 3;
+  }
+  .lp-nav-left {
+    display: none !important;
+  }
+  .lp-mobile-logo {
+    display: flex;
+  }
+  .lp-left {
+    padding: 44px 20px 56px;
+  }
+  .lp-card {
+    left: 16px;
+    bottom: 34px;
+    width: 272px;
+  }
+  .lp-nav-right .lp-hide-sm {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-root *,
+  *,
+  ::before,
+  ::after {
+    animation: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
