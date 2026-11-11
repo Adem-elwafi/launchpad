@@ -26,7 +26,7 @@ export default function TelemetryCard() {
           '0 24px 50px -20px rgba(15, 12, 32, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.4) inset',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="lp-card-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span
           style={{
             display: 'inline-flex',
@@ -61,7 +61,7 @@ export default function TelemetryCard() {
         </span>
       </div>
 
-      <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div className="lp-card-body" style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
             style={{
@@ -146,6 +146,7 @@ export default function TelemetryCard() {
       </div>
 
       <div
+        className="lp-card-latency"
         style={{
           marginTop: '14px',
           padding: '12px',

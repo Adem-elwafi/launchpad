@@ -77,7 +77,7 @@ export default function HeroSection({
             aria-label="Primary"
             style={{ display: 'flex', alignItems: 'center', gap: '36px', height: '48px' }}
           >
-            <a href="#" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#0F172A' }}>
+            <a href="#" className="lp-nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#0F172A' }}>
               <span
                 style={{
                   width: '34px',
@@ -111,17 +111,38 @@ export default function HeroSection({
               </span>
             </a>
 
-            <div style={{ display: 'flex', gap: '26px', fontSize: '14.5px', fontWeight: 500 }}>
+            <div className="lp-nav-links" style={{ display: 'flex', gap: '26px', fontSize: '14.5px', fontWeight: 500 }}>
               <a href="#features">Product</a>
               <a href="#network">Edge Network</a>
               <a href="#pricing">Pricing</a>
               <a href="#docs">Docs</a>
               <a href="#changelog">Changelog</a>
             </div>
+
+            <a
+              href="#signin"
+              className="lp-mobile-signin"
+              style={{
+                display: 'none',
+                alignItems: 'center',
+                height: '36px',
+                padding: '0 14px',
+                borderRadius: '10px',
+                border: '1px solid #E2E8F0',
+                background: '#FFFFFF',
+                fontSize: '13.5px',
+                fontWeight: 600,
+                color: '#0F172A',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+              }}
+            >
+              Sign in
+            </a>
           </nav>
 
           {/* Hero Content */}
           <div
+            className="lp-hero-content"
             style={{
               flexGrow: 1,
               display: 'flex',
@@ -185,6 +206,7 @@ export default function HeroSection({
 
             {/* Headline */}
             <h1
+              className="lp-hero-headline"
               style={{
                 margin: '28px 0 0',
                 fontSize: 'clamp(38px, 4.3vw, 60px)',
@@ -200,6 +222,7 @@ export default function HeroSection({
 
             {/* Subhead */}
             <p
+              className="lp-hero-subhead"
               style={{
                 margin: '22px 0 0',
                 fontSize: '18px',
@@ -218,6 +241,7 @@ export default function HeroSection({
             {/* Email signup */}
             <form
               onSubmit={handleSubmit}
+              className="lp-hero-form"
               style={{
                 marginTop: '16px',
                 maxWidth: '520px',
@@ -318,7 +342,7 @@ export default function HeroSection({
               </button>
             </form>
 
-            <p style={{ margin: '12px 0 0', fontSize: '13px', color: '#64748B' }}>
+            <p className="lp-hero-microcopy" style={{ margin: '12px 0 0', fontSize: '13px', color: '#64748B' }}>
               {submitted
                 ? 'Check your inbox — your launch link is on its way.'
                 : 'Free tier forever • No credit card required'}
@@ -326,6 +350,7 @@ export default function HeroSection({
 
             {/* Micro checklist */}
             <ul
+              className="lp-hero-checklist"
               style={{
                 listStyle: 'none',
                 margin: '30px 0 0',

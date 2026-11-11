@@ -2,13 +2,13 @@ import React, { useSyncExternalStore } from 'react';
 import { motion, useTransform, useReducedMotion, useMotionValue } from 'framer-motion';
 
 function subscribeDesktop(callback) {
-  const media = window.matchMedia('(min-width: 1024px)');
+  const media = window.matchMedia('(min-width: 768px)');
   media.addEventListener('change', callback);
   return () => media.removeEventListener('change', callback);
 }
 
 function getDesktopSnapshot() {
-  return window.matchMedia('(min-width: 1024px)').matches;
+  return window.matchMedia('(min-width: 768px)').matches;
 }
 
 function getDesktopServerSnapshot() {
@@ -59,7 +59,7 @@ export default function WaveDivider({ variant = 'side', className = '', scrollPr
   if (variant === 'bottom') {
     return (
       <motion.svg
-        className={`lp-wave-bottom lg:hidden ${className}`}
+        className={`lp-wave-bottom lg:hidden md:hidden ${className}`}
         aria-hidden="true"
         viewBox="0 0 400 72"
         preserveAspectRatio="none"
@@ -75,7 +75,7 @@ export default function WaveDivider({ variant = 'side', className = '', scrollPr
 
   return (
     <svg
-      className={`lp-wave-side hidden lg:block ${className}`}
+      className={`lp-wave-side hidden lg:block md:block ${className}`}
       aria-hidden="true"
       viewBox="0 0 175 1000"
       preserveAspectRatio="none"

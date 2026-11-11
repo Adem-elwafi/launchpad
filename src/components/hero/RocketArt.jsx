@@ -2,13 +2,13 @@ import React, { useSyncExternalStore } from 'react';
 import { motion, useTransform, useReducedMotion, useMotionValue } from 'framer-motion';
 
 function subscribeDesktop(callback) {
-  const media = window.matchMedia('(min-width: 1024px)');
+  const media = window.matchMedia('(min-width: 768px)');
   media.addEventListener('change', callback);
   return () => media.removeEventListener('change', callback);
 }
 
 function getDesktopSnapshot() {
-  return window.matchMedia('(min-width: 1024px)').matches;
+  return window.matchMedia('(min-width: 768px)').matches;
 }
 
 function getDesktopServerSnapshot() {
